@@ -9,8 +9,29 @@ Binning script for ChiMerge, Equal-Sized, Tree Optimal technique
 """
 #########
 
-class BinningTools:
+class Calculate_WOE_IV:
+
+    @staticmethod
+    def cross_table(df, target, var):
+        cross_tab = pd.crosstab(df[var], df[target]).reset_index(drop=False)
+        cross_tab.rename(columns={0:"good", 1:"bad"}, inplace=True)
+        cross_tab["total"] = cross_tab["good"] + cross_tab["bad"]
+        cross_tab["bad_rate"] = cross_tab["bad"] / cross_tab["total"]
+        cross_tab["good_rate"] = cross_tab["good"] / cross_tab["total"]
+        return cross_tab
     
+    @staticmethod
+    def calculate_WOE(cross_tab):
+        df = cross_tab.copy()
+        df["WOE"] = np.log(df["good_rate"] / df["bad_rate"])
+        return df
+    
+    def calculate_IV(df):
+        IV = sum((df["good_rate"] - df["bad_rate"]) * df["WOE"])
+        return IV
+
+class BinningTools:
+
     # Equal-Sized
     @staticmethod
     def equal_sized(x, y=None, max_bins=5):
