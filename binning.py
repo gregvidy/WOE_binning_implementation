@@ -21,9 +21,10 @@ class Calculate_WOE_IV:
         return cross_tab
     
     @staticmethod
-    def calculate_WOE(cross_tab):
+    def WOE_IV_table(cross_tab):
         df = cross_tab.copy()
         df["WOE"] = np.log(df["good_rate"] / df["bad_rate"])
+        df["IV"] = (df["good_rate"] - df["bad_rate"]) * df["WOE"]
         return df
     
     def calculate_IV(df):
